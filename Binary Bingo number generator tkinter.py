@@ -25,6 +25,7 @@ def show_number():
         time.sleep(10)  # wait 10 seconds
 
         # Show decimal
+	print(str(number))
         label.config(text=str(number), fg=TEAL)
         window.update()
         input("") # waits for user input before going to next number

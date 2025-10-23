@@ -89,7 +89,7 @@ def show_number():
     # Show binary
     label.config(text=binary, fg=PURPLE)
     window.update()
-    time.sleep(5)
+    time.sleep(3)
 
     # Show decimal
     label.config(text=str(number), fg=TEAL)
@@ -128,11 +128,12 @@ window.configure(bg=BG_COLOR)
 label = tk.Label(
     window,
     text="",
-    font=("Helvetica", 80, "bold"), # font and size of text
+    font=("Helvetica", 200, "bold"), # font and size of text
     bg=BG_COLOR,
     fg=PURPLE
 )
 label.pack(expand=True)
+
 
 # Buttons
 button_frame = tk.Frame(window, bg=BG_COLOR)
@@ -146,6 +147,19 @@ next_button.grid(row=0, column=1, padx=10)
 
 restart_button = tk.Button(button_frame, text="Restart", command=restart_program, font=("Helvetica", 16), bg=TEAL)
 restart_button.grid(row=0, column=2, padx=10)
+
+
+# credit to programmer
+label1 = tk.Label(
+    window,
+    text="Code by Zoe Weston",
+    font=("Helvetica", 10, "bold"), # font and size of text
+    bg=BG_COLOR,
+    fg=TEAL
+)
+# label1.pack(expand=True)
+label1.place(x=1710, y=980)
+
 
 restart_program()
 

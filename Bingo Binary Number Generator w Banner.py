@@ -238,12 +238,6 @@ label2 = tk.Label(window,
     bg=BG_COLOR,
     fg=TEAL
 )
-label3 = tk.Label(window,
-    text="And Chatgpt",
-    font=("Helvetica", 1),
-    bg=BG_COLOR,
-    fg=TEAL
-)
 
 label1.place(relx=1.0, rely=1.0, anchor="se", x=-10, y=-40)  # bottom-right corner with small padding
 label2.place(relx=1.0, rely=1.0, anchor="se", x=-10, y=-20)  # bottom-right corner with small padding

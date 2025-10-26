@@ -14,6 +14,7 @@ list_size = 0
 head = None
 # buttons
 next_pressed = False
+reveal_pressed = False
 started = False
 # banner
 called_numbers = []
@@ -22,6 +23,9 @@ font = ("Arial", 48, "bold")
 gap_text = "     "  # gap after the number list in banner
 banner_text = ""
 banner_height = 80
+
+current_number = None
+current_binary= None
 
 # Setting up linked list
 # ensures no duplicate numbers
@@ -78,7 +82,7 @@ def choose_colour(start_hex, end_hex, factor):
 
 # Random binary generator
 def random_binary():
-    global list_size, head
+    global list_size, head, current_number, current_binary
     if list_size==0:
         return 128, 10000000
  
@@ -93,8 +97,8 @@ def random_binary():
         prev = current
         current = current.next
 
-    number = current.data
-    binary = format(number, "08b")
+    current_number = current.data
+    current_binary= format(current_number, "08b")
 
     # removes chosen number from linked list
     if prev == None:
@@ -103,35 +107,56 @@ def random_binary():
         prev.next = current.next
     list_size -=1
 
-    return number, binary
+    return current_number, current_binary
 
-def show_number():
+def show_binary():
     global next_pressed, started, running
     if not running or not started:
-        window.after(100, show_number)
+        window.after(100, show_binary)
         return
 
     if not next_pressed:
-        window.after(100, show_number)
+        window.after(100, show_binary)
         return
+    
+    reveal_button.config(state="normal")
+    next_button.config(state="disabled")
 
     next_pressed = False
 
-    number, binary = random_binary()
-    print(number)
+    # number, binary = random_binary()
+    current_number, current_binary = random_binary()
+    print(current_number)
 
-    factor = number / 127
-    colour = choose_colour(TEAL, PURPLE, factor)
     # formats the binary to have 4 bits then a space then the other 4 bits
     def format_binary():
-        grouped = [binary[i:i+4] for i in range(0, len(binary), 4)]
+        grouped = [current_binary[i:i+4] for i in range(0, len(current_binary), 4)]
         # Join with a single space between groups
         return (grouped)
     # Show binary first
     label.config(text=format_binary(), fg=PURPLE)
 
+def reveal_number():
+    global current_number, reveal_pressed, started, running
+    if not running or not started or current_number is None:
+        return
+
+    reveal_pressed = False
+    factor = current_number / 127
+    colour = choose_colour(TEAL, PURPLE, factor)
+
+    label.config(text=str(current_number), fg=colour)
+    called_numbers.insert(0, current_number)
+    update_banner_text()
+    window.after(100, show_binary)
+
+    reveal_button.config(state="disabled")
+    next_button.config(state="normal")
+
+
     
 
+"""
     # After 3 seconds, show decimal
     # inside show_number() because it allows sharing of local variables without passing
     def show_decimal():
@@ -141,17 +166,24 @@ def show_number():
         window.after(100, show_number)  # schedule next cycle safely
 
     window.after(3000, show_decimal) # miliseconds for delay after binary number
-
+"""
 
 # buttons functions
 def start_program():
     global started
     started = True
-    start_button.config(state="disabled")  # disable start after pressing
+    start_button.config(state="disabled")
+    next_button.config(state="normal")
+    reveal_button.config(state="disabled")
+
 
 def next_number():
     global next_pressed
     next_pressed = True
+
+# def reveal_number():
+#     global reveal_pressed
+#     reveal_pressed = True
 
 def restart_program():
     global started, called_numbers
@@ -162,6 +194,10 @@ def restart_program():
     start_button.config(state="normal")
     reset_banner_position()
     update_banner_text()
+    start_button.config(state="normal")
+    next_button.config(state="disabled")
+    reveal_button.config(state="disabled")
+
 
 # set up the linked list before starting
 head = setInitalList()
@@ -277,11 +313,14 @@ button_frame.pack(pady=20)
 start_button = tk.Button(button_frame, text="Start", command=start_program, font=(font, 16), bg=PURPLE)
 start_button.grid(row=0, column=0, padx=10)
 
-next_button = tk.Button(button_frame, text="Next", command=next_number, font=(font, 16), bg = '#6b8eca')
+next_button = tk.Button(button_frame, text="Next", command=next_number, font=(font, 16), bg = '#7A7ED9')
 next_button.grid(row=0, column=1, padx=10)
 
+reveal_button = tk.Button(button_frame, text="Reveal", command=reveal_number, font=(font, 16), bg = '#5C9EBC')
+reveal_button.grid(row=0, column=2, padx=10)
+
 restart_button = tk.Button(button_frame, text="Restart", command=restart_program, font=(font, 16), bg=TEAL)
-restart_button.grid(row=0, column=2, padx=10)
+restart_button.grid(row=0, column=3, padx=10)
 
 # credit label (placed bottom-right)
 label1 = tk.Label(
@@ -306,11 +345,11 @@ restart_program()
 
 # Thread to run number updates without freezing window
 running = True
-# thread = Thread(target=show_number, daemon=True)
+# thread = Thread(target=show_binary, daemon=True)
 # thread.start()
 
 restart_program()
-show_number()
+show_binary()
 move_banner()
 
 

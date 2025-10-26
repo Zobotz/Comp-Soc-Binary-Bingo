@@ -122,9 +122,15 @@ def show_number():
 
     factor = number / 127
     colour = choose_colour(TEAL, PURPLE, factor)
-
+    # formats the binary to have 4 bits then a space then the other 4 bits
+    def format_binary():
+        grouped = [binary[i:i+4] for i in range(0, len(binary), 4)]
+        # Join with a single space between groups
+        return (grouped)
     # Show binary first
-    label.config(text=binary, fg=PURPLE)
+    label.config(text=format_binary(), fg=PURPLE)
+
+    
 
     # After 3 seconds, show decimal
     # inside show_number() because it allows sharing of local variables without passing

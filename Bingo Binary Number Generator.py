@@ -153,21 +153,6 @@ def reveal_number():
     reveal_button.config(state="disabled")
     next_button.config(state="normal")
 
-
-    
-
-"""
-    # After 3 seconds, show decimal
-    # inside show_number() because it allows sharing of local variables without passing
-    def show_decimal():
-        label.config(text=str(number), fg=colour)
-        called_numbers.insert(0, number)
-        update_banner_text()
-        window.after(100, show_number)  # schedule next cycle safely
-
-    window.after(3000, show_decimal) # miliseconds for delay after binary number
-"""
-
 # buttons functions
 def start_program():
     global started
@@ -176,14 +161,9 @@ def start_program():
     next_button.config(state="normal")
     reveal_button.config(state="disabled")
 
-
 def next_number():
     global next_pressed
     next_pressed = True
-
-# def reveal_number():
-#     global reveal_pressed
-#     reveal_pressed = True
 
 def restart_program():
     global started, called_numbers
@@ -197,7 +177,6 @@ def restart_program():
     start_button.config(state="normal")
     next_button.config(state="disabled")
     reveal_button.config(state="disabled")
-
 
 # set up the linked list before starting
 head = setInitalList()
@@ -214,6 +193,7 @@ banner_canvas = tk.Canvas(window, width=800, height=banner_height, bg="black", h
 banner_canvas.pack(side="top", fill="x")
 banner_canvas.update()
 canvas_width = banner_canvas.winfo_width()
+
 text_item = banner_canvas.create_text(
     canvas_width,
     banner_height // 2,
@@ -237,54 +217,33 @@ text_width = banner_canvas.bbox(text_item)[2] - banner_canvas.bbox(text_item)[0]
 # Banner scroll logic# Start banner scrolling
 def move_banner():
     global text_width
-    for item in text_items:
-        banner_canvas.move(item, -speed, 0)
-    # When text leaves the screen, restart
-    x = banner_canvas.coords(text_items[0])[0]
+    banner_canvas.move(text_item, -speed, 0)
+    x = banner_canvas.coords(text_item)[0]
+
     if x + text_width < 0:
-        banner_canvas.coords(text_items[0], 1500, banner_height // 2)
+        # Reset position to start from right again
+        banner_canvas.coords(text_item, 1500, banner_height // 2)
     window.after(20, move_banner)
 
+
+
+
 def update_banner_text():
-    global text_width, text_items
-    banner_canvas.delete("all")  # clear existing text
-
-    text_items = []
-    x = 1500  # starting x position
-    y = banner_height // 2
-
+    global text_width
     if called_numbers:
-        # Create each number with colour based on its value
-        for num in called_numbers:
-            factor = num / 127
-            color = choose_colour(TEAL, PURPLE, factor)
-            item = banner_canvas.create_text(
-                x, y,
-                text=str(num),
-                font=font,
-                fill=color,
-                anchor="w"
-            )
-            bbox = banner_canvas.bbox(item)
-            width = bbox[2] - bbox[0] + 20  # small gap between numbers
-            x += width
-            text_items.append(item)
+        text = "  ".join(map(str, called_numbers)) + gap_text
     else:
-        # Default message
-        item = banner_canvas.create_text(
-            x, y,
-            text="Waiting for numbers...",
-            font=font,
-            fill=TEAL,
-            anchor="w"
-        )
-        text_items.append(item)
+        text = "Waiting for numbers..." + gap_text
 
-    # Compute banner width for reset logic
-    banner_canvas.update()
-    bbox = banner_canvas.bbox(text_items[-1])
-    text_width = bbox[2] - banner_canvas.bbox(text_items[0])[0]
-    banner_canvas.coords(text_items[0], 1500, y)
+    banner_canvas.itemconfig(text_item, text=text)
+    banner_canvas.update()  # Important!
+
+    bbox = banner_canvas.bbox(text_item)
+    text_width = bbox[2] - bbox[0]
+
+    canvas_width = banner_canvas.winfo_width()
+    banner_canvas.coords(text_item, 1500, banner_height // 2)
+
 
 def reset_banner_position():
     # Reset banner to start at right edge
@@ -326,7 +285,7 @@ restart_button.grid(row=0, column=3, padx=10)
 label1 = tk.Label(
     window,
     text="Code by Zoe Weston",
-    font=(font, 10, "bold"),
+    font=(font, 16, "bold"),
     bg=BG_COLOR,
     fg=TEAL
 )

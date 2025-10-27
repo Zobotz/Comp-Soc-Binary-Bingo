@@ -25,7 +25,7 @@ Recent versions now include:
 
 ---
 
-## 🧩 Features
+## Features
 
 - Generates globally unique bingo cards (no duplicates)  
 - Uses CompSoc’s brand colours in a smooth gradient  
@@ -35,7 +35,7 @@ Recent versions now include:
 - Output in print-ready PDF format for easy distribution  
 - Simple, modern graphical interface using Tkinter  
 
-## 🛠️ Requirements
+## Requirements
 
 ### General
 - **Python 3.8+**

@@ -23,8 +23,6 @@ Recent versions now include:
 - Buttons for **Next**, **Reveal**, **Restart**, and **Start**  
 - Ready for expansion with **random challenge events**  
 
----
-
 ## Features
 
 - Generates globally unique bingo cards (no duplicates)  

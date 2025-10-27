@@ -21,8 +21,10 @@ COLOR_RIGHT = hex_to_color("#28d6a9")   # teal (right)
 
 # Number generator
 def generate_card_numbers():
-    """Return 25 unique numbers from 0–127 (random order)."""
-    return random.sample(range(0,128), 25)
+    """Return 25 unique numbers from 0–127 (excluding 67)."""
+    valid_numbers = [n for n in range(128) if n != 67]
+    numbers = random.sample(valid_numbers, 25)
+    return numbers
 
 # Gradient background
 def draw_gradient_background(c, x, y, w, h, color_left, color_right, steps=50):
@@ -36,7 +38,7 @@ def draw_gradient_background(c, x, y, w, h, color_left, color_right, steps=50):
         c.rect(x + w * t, y, w / steps + 1, h, stroke=0, fill=1)
 
 # Draw one bingo card
-def draw_card(c, x, y, w, h, numbers):
+def draw_card(c, x, y, w, h, numbers, card_index):
     draw_gradient_background(c, x, y, w, h, COLOR_LEFT, COLOR_RIGHT)
 
     # Title
@@ -50,8 +52,8 @@ def draw_card(c, x, y, w, h, numbers):
     col_xs = [left + i*(right-left)/4 for i in range(5)]
     row_ys = [top - j*(top-bottom)/4 for j in range(5)]
 
-    circle_r = min((right-left)/10, (top-bottom)/10)  # size of circles
-    c.setFont("Helvetica-Bold", 22)  # numbers font and size
+    circle_r = min((right-left)/10, (top-bottom)/10)
+    c.setFont("Helvetica-Bold", 22)
 
     idx = 0
     for r in range(5):
@@ -64,6 +66,14 @@ def draw_card(c, x, y, w, h, numbers):
             c.setFillColor(colors.black)
             c.drawCentredString(cx, cy - 7, str(numbers[idx]))
             idx += 1
+
+    # --- Add card number at bottom ---
+    binary_id = format(card_index + 1, "08b")  # convert to 8-bit binary
+    formatted = binary_id[:4] + " " + binary_id[4:]  # insert a space
+    c.setFont("Helvetica-Bold", 8)
+    c.setFillColor(colors.white)
+    c.drawCentredString(x + w/2, y + 0.2*inch, f"Card Number: {formatted}")
+
 
 # Build PDF
 pdf_path = "Binary_Bingo.pdf"
@@ -78,7 +88,7 @@ for i in range(80):     # number of cards
         if key not in seen:
             seen.add(numss)
             break
-    draw_card(c, MARGIN, MARGIN, CARD_W, CARD_H, nums)
+    draw_card(c, MARGIN, MARGIN, CARD_W, CARD_H, nums, i)
     c.showPage()
 
 c.save()

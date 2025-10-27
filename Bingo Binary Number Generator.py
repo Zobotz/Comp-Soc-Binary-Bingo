@@ -16,6 +16,7 @@ head = None
 next_pressed = False
 reveal_pressed = False
 started = False
+event_active = False
 # banner
 called_numbers = []
 speed = 3  # pixels per frame for banner scroll
@@ -119,10 +120,16 @@ def show_binary():
         window.after(100, show_binary)
         return
     
+    next_pressed = False
+    
+    # 10% chance of event occuring
+    if random.random() < 0.1: # use 0.5 for testing purposes
+        trigger_special_event()
+        return #-------------------------------i think should call show_binary()---------------------------------------------------------
+    
     reveal_button.config(state="normal")
     next_button.config(state="disabled")
 
-    next_pressed = False
 
     # number, binary = random_binary()
     current_number, current_binary = random_binary()
@@ -162,8 +169,16 @@ def start_program():
     reveal_button.config(state="disabled")
 
 def next_number():
-    global next_pressed
+    global next_pressed, event_active
+    if event_active:
+        # leave a clean slate, restore font, and immediately resume
+        label.config(text="", fg=PURPLE, font=(font, 200, "bold"))
+        event_active = False
+        next_pressed = True
+        window.after(0, show_binary)   # <- IMPORTANT: resume now
+        return
     next_pressed = True
+
 
 def restart_program():
     global started, called_numbers
@@ -258,6 +273,16 @@ def move_banner():
 def reset_banner_position():
     # Reset everything back to starting position on restart
     update_banner_text()
+
+# special event for something random to happen
+def trigger_special_event():
+    global event_active
+    event_active = True
+
+    label.config(text="CHALLENGE TIME!", fg="#ff3333", font=("Helvetica", 100, "bold"))
+    next_button.config(state="normal")     # user can press Next to exit event
+    reveal_button.config(state="disabled")
+
 
 
 # Close safely on exit

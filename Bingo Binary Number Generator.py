@@ -192,62 +192,73 @@ window.configure(bg=BG_COLOR)
 banner_canvas = tk.Canvas(window, width=800, height=banner_height, bg="black", highlightthickness=0)
 banner_canvas.pack(side="top", fill="x")
 banner_canvas.update()
-canvas_width = banner_canvas.winfo_width()
 
-text_item = banner_canvas.create_text(
-    canvas_width,
-    banner_height // 2,
-    text=banner_text,
-    font=font,
-    fill=TEAL,
-    anchor="w"
-)
-# Create banner text item
-banner_text = "Waiting for numbers..." + gap_text
-text_item = banner_canvas.create_text(
-    1500,                    
-    banner_height // 2,
-    text=banner_text,
-    font=font,
-    fill=TEAL,
-    anchor="w"
-)
-banner_canvas.update()
-text_width = banner_canvas.bbox(text_item)[2] - banner_canvas.bbox(text_item)[0]
-# Banner scroll logic# Start banner scrolling
-def move_banner():
-    global text_width
-    banner_canvas.move(text_item, -speed, 0)
-    x = banner_canvas.coords(text_item)[0]
-
-    if x + text_width < 0:
-        # Reset position to start from right again
-        banner_canvas.coords(text_item, 1500, banner_height // 2)
-    window.after(20, move_banner)
-
-
-
+# Track banner text items
+text_items = []
+text_width = 0
 
 def update_banner_text():
-    global text_width
-    if called_numbers:
-        text = "  ".join(map(str, called_numbers)) + gap_text
-    else:
-        text = "Waiting for numbers..." + gap_text
+    global text_items, text_width
+    banner_canvas.delete("all")  # clear the canvas
+    text_items = []
 
-    banner_canvas.itemconfig(text_item, text=text)
-    banner_canvas.update()  # Important!
+    y = banner_height // 2
+    x = 1500  # start position off-screen right
 
-    bbox = banner_canvas.bbox(text_item)
+    if not called_numbers:
+        # Default message before game starts
+        item = banner_canvas.create_text(
+            x, y,
+            text="Waiting for numbers...",
+            font=font,
+            fill=TEAL,
+            anchor="w"
+        )
+        text_items.append(item)
+        banner_canvas.update()
+        bbox = banner_canvas.bbox(item)
+        text_width = bbox[2] - bbox[0]
+        return
+
+    # Draw all numbers with gradient colors
+    for num in (called_numbers):  # newest numbers appear last
+        factor = num / 127
+        color = choose_colour(TEAL, PURPLE, factor)
+
+        item = banner_canvas.create_text(
+            x, y,
+            text=str(num),
+            font=font,
+            fill=color,
+            anchor="w"
+        )
+        text_items.append(item)
+
+        bbox = banner_canvas.bbox(item)
+        width = bbox[2] - bbox[0] + 40  # add space between numbers
+        x += width
+
+    banner_canvas.update()
+    bbox = banner_canvas.bbox("all")
     text_width = bbox[2] - bbox[0]
 
-    canvas_width = banner_canvas.winfo_width()
-    banner_canvas.coords(text_item, 1500, banner_height // 2)
+def move_banner():
+    global text_width
+    for item in text_items:
+        banner_canvas.move(item, -speed, 0)
 
+    # Check if everything has scrolled off the left edge
+    if text_items:
+        x = banner_canvas.coords(text_items[-1])[0]
+        if x + text_width < 5:
+            update_banner_text()
+
+    window.after(20, move_banner)
 
 def reset_banner_position():
-    # Reset banner to start at right edge
-    banner_canvas.coords(text_item, 800, banner_height//2)
+    # Reset everything back to starting position on restart
+    update_banner_text()
+
 
 # Close safely on exit
 def on_close():

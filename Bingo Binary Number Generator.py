@@ -2,6 +2,7 @@ import tkinter as tk
 import random
 import time
 from threading import Thread
+from tkinter import PhotoImage
 
 # Global variables  
 # Colours
@@ -123,9 +124,9 @@ def show_binary():
     next_pressed = False
     
     # 10% chance of event occuring
-    if random.random() < 0.1: # use 0.5 for testing purposes
+    if random.random() < 0.25: # use 0.5 for testing purposes
         trigger_special_event()
-        return #-------------------------------i think should call show_binary()---------------------------------------------------------
+        return #----------------------------------------------------------------------------------------
     
     reveal_button.config(state="normal")
     next_button.config(state="disabled")
@@ -202,6 +203,34 @@ window = tk.Tk()
 window.title("Binary Display with Bingo Banner")
 window.geometry("800x350") # increased height for banner + main display
 window.configure(bg=BG_COLOR)
+
+# --- Logo (plain Tkinter, no PIL) ---
+try:
+    logo_img = tk.PhotoImage(file="vectorWithFancyEdges.png")  # file in same folder
+    logo_img = logo_img.subsample(6, 6)
+
+except Exception as e:
+    print("Failed to load logo:", e)
+    logo_img = None
+
+if logo_img:
+    # Optional: downscale if too big (integer factors only)
+    # e.g., halves size -> subsample(2, 2). Adjust as needed.
+    # logo_img = logo_img.subsample(2, 2)
+
+    logo_label = tk.Label(window, image=logo_img, bg=BG_COLOR, borderwidth=0)
+    logo_label.image = logo_img  # keep a reference!
+    # Center on the window
+    logo_label.place(x=15, y=90, anchor="nw")
+    logo_label.lift()  # bring above everything
+
+    # If other widgets keep covering it, nudge it to the top periodically:
+    def keep_logo_on_top():
+        logo_label.lift()
+        window.after(1000, keep_logo_on_top)
+
+    keep_logo_on_top()
+
 
 # Banner Canvas
 banner_canvas = tk.Canvas(window, width=800, height=banner_height, bg="black", highlightthickness=0)

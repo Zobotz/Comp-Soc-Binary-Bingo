@@ -41,10 +41,31 @@ def draw_gradient_background(c, x, y, w, h, color_left, color_right, steps=50):
 def draw_card(c, x, y, w, h, numbers, card_index):
     draw_gradient_background(c, x, y, w, h, COLOR_LEFT, COLOR_RIGHT)
 
+        # --- Add CompSoc logo with white background ---
+    try:
+        logo_path = "vectorWithFancyEdges.png"
+        logo_width = 1.2 * inch
+        logo_height = 0.6 * inch
+        logo_x = x + 0.3 * inch
+        logo_y = y + h - 0.9 * inch
+
+        # Draw white rectangle behind the logo
+        c.setFillColor(colors.white)
+        # Draw white rounded rectangle behind the logo
+        c.setFillColor(colors.white)
+        c.roundRect(w-(logo_x - 6), logo_y - 6, logo_width + 12, logo_height + 12, 10, stroke=0, fill=1)
+
+        # Draw logo image on top
+        c.drawImage(logo_path, w-(logo_x-12), logo_y, width=logo_width, height=logo_height, mask='auto')
+    except Exception as e:
+        print("Logo not found or failed to load:", e)
+
+
     # Title
     c.setFillColor(colors.white)
     c.setFont("Helvetica-Bold", 46)
-    c.drawCentredString(x + w/2, y + h - 1.2*inch, "BINARY BINGO")
+    c.drawString(x + 0.4 * inch, y + h - 0.9 * inch, "BINARY BINGO")
+    # c.drawCentredString(x + 0.6 * inch, y + h - 0.9 * inch, "BINARY BINGO")
 
     # Grid
     left, right = x + 0.9*inch, x + w - 0.9*inch
@@ -80,7 +101,7 @@ pdf_path = "Binary_Bingo.pdf"
 c = canvas.Canvas(pdf_path, pagesize=A4)
 
 seen = set()
-for i in range(80):     # number of cards
+for i in range(1):     # number of cards
     while True:
         nums = generate_card_numbers()
         key = tuple(sorted(nums))    # ensure global uniqueness

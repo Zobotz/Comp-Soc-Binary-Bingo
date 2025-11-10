@@ -101,7 +101,7 @@ pdf_path = "Binary_Bingo.pdf"
 c = canvas.Canvas(pdf_path, pagesize=A4)
 
 seen = set()
-for i in range(1):     # number of cards
+for i in range(100):     # number of cards
     while True:
         nums = generate_card_numbers()
         key = tuple(sorted(nums))    # ensure global uniqueness

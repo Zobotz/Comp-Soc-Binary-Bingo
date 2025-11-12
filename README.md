@@ -55,7 +55,7 @@ This design makes it easy to customise or expand the challenges without editing 
 Used to generate printable bingo cards.
 
 **Libraries:**
-- Built-in: 'random'
+- Built-in: `random`
 - External: `reportlab` – for creating and exporting PDFs; `pillow` – for image and colour gradient handling  
 
 **Install:**
@@ -63,19 +63,19 @@ Used to generate printable bingo cards.
 pip install reportlab pillow
 ```
 
-### Binary Number Display ('Binary Number Generator.py')
+### Binary Number Display (`Binary Number Generator.py`)
 Used for the GUI which displays all numbers.
 
 **Libaries**
-- Built-in: 'tkinter', 'random', 'time', 'threading', 'sqlite3'
-- Local: 'Bingo_Database_Access.py'
+- Built-in: `tkinter`, `random`, `time`, `threading`, `sqlite3`
+- Local: `Bingo_Database_Access.py`
 No additional installation required beyond standard Python.
 
 ### Database Access (Bingo_Database_Access.py)
 Used to access the challenges from a separte Database
 
 **Libaries**
-- Built-in: 'sqlite3', 'random'
-- Database file: 'Database.db' (inlcuded and editable with any SQLite editor)
+- Built-in: `sqlite3`, `random`
+- Database file: `Database.db` (inlcuded and editable with any SQLite editor)
 No additional installation required.
  

@@ -7,7 +7,7 @@ It provides an interactive, accessible way to host a **Binary Bingo Night**, com
 
 The repository includes three key components that work together to create the full Binary Bingo experience:
 
-### **Bingo Card Generator**
+### **1. Bingo Card Generator**
 A Python script that generates unique, printable bingo cards with numbers from **0 to 127**.  
 Each card features:
 - CompSoc's signature gradient
@@ -15,7 +15,7 @@ Each card features:
 - CompSoc logo with styled background
 - All output in PDF format for printing
 
-### **Binary Number Display**
+### **2. Binary Number Display**
 A **Tkinter-based** GUI application used during the live event.  
 It randomly generates binary numbers, displays them in binary form, and then reveals their decimal equivalents.  
 Each number is unique, using a **linked list** to ensure no repeats.  
@@ -27,7 +27,7 @@ Core features include:
 - Dynamic CompSoc colour gradient for numbers and UI
 - Intergrated challenge system triggered at random intervals
 
-### **Challenge Database**
+### **3. Challenge Database**
 A lightweight SQLite database that stores a list of fun challenges and event prompts.
 When a challenge occurs during the game, a random entry is fetched and displayed on-screen.
 
